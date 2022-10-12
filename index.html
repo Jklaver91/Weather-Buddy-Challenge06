@@ -1,62 +1,58 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
-    <meta charset="UTF-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link
-      rel="stylesheet"
-      href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"/>
-    <link
-      rel="stylesheet"
-      href="https://use.fontawesome.com/releases/v5.8.1/css/all.css"
-      integrity="sha384-50oBUHEmvpQ+1lW4y57PTFmhCaXp0ML5d60M1M7uH2+nqUivzIebhndOJK28anvf"
-      crossorigin="anonymous"/>
-    <link rel="stylesheet" href="./assets/css/style.css">
-    <title>Weather Buddy!</title>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" />
+  <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.8.1/css/all.css"
+    integrity="sha384-50oBUHEmvpQ+1lW4y57PTFmhCaXp0ML5d60M1M7uH2+nqUivzIebhndOJK28anvf" crossorigin="anonymous" />
+  <link rel="stylesheet" href="./assets/css/style.css">
+  <title>Weather Buddy!</title>
 </head>
+
 <body class="flex-column min-100-vh">
-    <header class="hero text-center">
-        <h1 class="app-title">Weather buddy!</h1>
-        <p class="text-left">Enter a location to see the weather!</p>
-    </header>
-    <main class="flex-row justify-space-between">
-            <div class="col-12 col-md-4">
+  <header class="hero text-center">
+    <h1 class="app-title">Weather buddy!</h1>
+    <p class="text-left">Enter a location to see the weather!</p>
+  </header>
+  <main class="flex-row justify-space-between">
+    <div class="col-12 col-md-4">
 
-                <div class="card" id="citySearch">
-                    <h3 class="card-header text-uppercase text-center">Search For A City!</h3>
-                    <form id="user-form" class="card-body">
-                    <label class="form-label" for="city">City</label>
-                    <input name="city" id="city" type="text" autofocus="true" class="form-input" />
-                    <button type="submit" class="btn">Get Weather</button>
-                    </form>
-                </div>
-            </div>
+      <div class="card" id="citySearch">
+        <h3 class="card-header text-uppercase text-center">Search For A City!</h3>
+        <form id="user-form" class="card-body">
+          <label class="form-label" for="city">City</label>
+          <input name="city" id="city" type="text" autofocus="true" class="form-input" />
+          <button type="submit" class="btn">Get Weather</button>
+        </form>
+      </div>
+    </div>
 
-        <div class="col-12 col-md-8">
-            <div class="card">
-            <h2 class="subtitle text-center">Showing Weather for: <span id="city-search-term"></span></h2>
-            <div id="city-container" class="list-group">
-                <img class="right w-25" id="current-pic" alt="">
-                <p id="temperature"></p>
-                <p id="humidity"></p>
-                <p id="wind"></p>
-                <p id="uv"></p>
-            </div>
-            </div>
-          </div>
-        </main>
-          <div class="col-md-12 d-flex">
-              <div class="col-md-4 card">
-                  <p>test</p>
-                  <p>test</p>
-                  <p>test</p>
-                </div>
-                <div class="col-md-8 justify-content-around card mx-2"> 
-                  <div class="row d-flex justify-content-between" id="cardContainer"></div>
-                </div>
-          </div>
-    <script src="https://code.jquery.com/jquery-3.4.1.min.js"></script>
-    <script src="./assets/js/script.js"></script>
+    <div class="col-12 col-md-8">
+      <div class="card">
+        <h2 class="subtitle text-center">Showing Weather for: <span id="city-search-term"></span></h2>
+        <div id="city-container" class="list-group text-center">
+  
+          <p id="temperature"></p>
+          <p id="humidity"></p>
+          <p id="wind"></p>
+          <p id="uv"></p>
+        </div>
+      </div>
+    </div>
+  </main>
+  <div class="col-md-12 d-flex">
+    <div class="col-md-4 card">
+      <button type="search" class="btn btn-link d-none" id="search"></button>
+    </div>
+    <div class="col-md-8 justify-content-around card mx-2">
+      <div class="row d-flex justify-content-between" id="cardContainer"></div>
+    </div>
+  </div>
+  <script src="https://code.jquery.com/jquery-3.4.1.min.js"></script>
+  <script src="./assets/js/script.js"></script>
 </body>
+
 </html>
