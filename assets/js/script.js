@@ -14,27 +14,23 @@ const clearButton = document.querySelector("#clear-btn");
 var getWeather = function (city) {
   // format the github api url
   var apiUrl = 'https://api.openweathermap.org/data/2.5/weather?q=' + city + '&appid=8a42d43f7d7dc180da5b1e51890e67dc';
-  
-  
+
+
   // make a request to the url
   fetch(apiUrl)
-  .then(function (res) {
-    return res.json();
-  })
-  .then(function (data) {
-    console.log(data);
-    tempDisplay(data, city);
-    return fetch(`https://api.openweathermap.org/data/2.5/onecall?lat=${data.coord.lat}&lon=${data.coord.lon}&appid=8a42d43f7d7dc180da5b1e51890e67dc`)
-  })
-  .then(function (res) {
-    // currentHeadingEl.innerHTML = data[0].name + " (" + moment().format("M/D/YYYY") + ") ";
-    return res.json();
-  })
-  .then(function (data) {
-    console.log(data);
-    fiveDayDisplay(data, city);
-    console.log(data.daily[0].temp.day);
-  });
+    .then(function (res) {
+      return res.json();
+    })
+    .then(function (data) {
+      tempDisplay(data, city);
+      return fetch(`https://api.openweathermap.org/data/2.5/onecall?lat=${data.coord.lat}&lon=${data.coord.lon}&appid=8a42d43f7d7dc180da5b1e51890e67dc`)
+    })
+    .then(function (res) {
+      return res.json();
+    })
+    .then(function (data) {
+      fiveDayDisplay(data, city);
+    });
 };
 
 var formSubmitHandler = function (event) {
@@ -42,7 +38,7 @@ var formSubmitHandler = function (event) {
   // get value from input element
   var city = nameInputEl.value.trim();
   saveSearch(city);
-  
+
   if (city) {
     getWeather(city);
     nameInputEl.value = "";
@@ -52,15 +48,14 @@ var formSubmitHandler = function (event) {
 };
 
 var tempDisplay = function (data) {
-  var currMonthName  = moment().format('MMMM');
-  citySearchTerm.textContent = data.name + ": " + currMonthName + " " + moment().date() + ", " + moment().year() ;
-  console.log(data.main.temp);
+  var currMonthName = moment().format('MMMM');
+  citySearchTerm.textContent = data.name + ": " + currMonthName + " " + moment().date() + ", " + moment().year();
   cityContainerEl.replaceChildren();
   var currentTemp = document.createElement("h3");
   var currentHumidity = document.createElement("h3");
   var currentWind = document.createElement("h3");
   let iconLink = "https://openweathermap.org/img/w/" + data.weather[0].icon + ".png";
-  
+
   window.setInterval(function () {
     $('#currentDay').html(moment().format('ddd MM/DD H:mm:ss'))
   }, 1000);
@@ -88,7 +83,6 @@ var fiveDayDisplay = function (data) {
     var el = document.createElement("div");
     var humidity = document.createElement("div");
     var wind = document.createElement("div");
-    var icon = document.createElement("div");
     el.className = "card text-center mx-3 mt-3";
     el.id = "card" + i;
     el.innerHTML = "Temp:" + k2f(dailyTemp) + " &#176F ";
@@ -100,35 +94,43 @@ var fiveDayDisplay = function (data) {
   }
 };
 
-let saveSearch = function(city) {
+let saveSearch = function (city) {
   if (search.includes(city)) {
-      return;
+    return;
   } else {
-      search.push(city)
-      localStorage.setItem("search", JSON.stringify(search));
-      loadSearch();
+    search.push(city);
+    localStorage.setItem("search", JSON.stringify(search));
+    loadStorage();
   }
 }
 
 //load search history when page loads
-let loadSearch = function() {
+let loadStorage = function () {
   if (search.length > 0) {
-      searchContainerEl.innerHTML = " ";
-      for (i = 0; i < search.length; i++) {
-          let searchBtn = document.createElement("button")
-          searchBtn.className = "search-btn w-100 m-0 mb-2 pe-auto"
-          searchBtn.textContent = search[i]
-          searchContainerEl.appendChild(searchBtn);
-      }
+    searchContainerEl.innerHTML = " ";
+    for (i = 0; i < search.length; i++) {
+      let searchBtn = document.createElement("button");
+      searchBtn.className = "btn w-100 m-0 mt-2 mb-2 pe-auto";
+      searchBtn.textContent = search[i];
+      searchContainerEl.appendChild(searchBtn);
+    }
   } else {
-      searchContainerEl.innerHTML = " ";
+    searchContainerEl.innerHTML = " ";
   }
 }
 
-let clearHistory = function() {
+let clearStorage = function () {
   search = [];
   localStorage.clear();
-  loadSearch();
+  loadStorage();
+}
+
+let viewPast = function (event) {
+  if (event.target.innerHTML.includes("<")) {
+    return;
+  } else {
+    getWeather(event.target.innerHTML);
+  }
 }
 
 function k2f(K) {
@@ -137,4 +139,5 @@ function k2f(K) {
 
 
 userFormEl.addEventListener("submit", formSubmitHandler);
-clearButton.addEventListener("click", clearHistory);
+clearButton.addEventListener("click", clearStorage);
+searchContainerEl.addEventListener("click", viewPast);
