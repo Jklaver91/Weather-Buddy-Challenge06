@@ -7,42 +7,42 @@ var currentHumidity = document.getElementById("humidity");
 var currentWind = document.getElementById("wind");
 var currentUV = document.getElementById("UV");
 const currentIconEl = document.querySelector("#current-icon");
+let search = JSON.parse(localStorage.getItem("search") || "[]");
+const searchContainerEl = document.querySelector("#search-container")
+const clearButton = document.querySelector("#clear-btn");
 
 var getWeather = function (city) {
   // format the github api url
   var apiUrl = 'https://api.openweathermap.org/data/2.5/weather?q=' + city + '&appid=8a42d43f7d7dc180da5b1e51890e67dc';
-
-
+  
+  
   // make a request to the url
   fetch(apiUrl)
-    .then(function (res) {
-      return res.json();
-    })
-    .then(function (data) {
-      console.log(data);
-      tempDisplay(data, city);
-      return fetch(`https://api.openweathermap.org/data/2.5/onecall?lat=${data.coord.lat}&lon=${data.coord.lon}&appid=8a42d43f7d7dc180da5b1e51890e67dc`)
-    })
-    .then(function (res) {
-      // currentHeadingEl.innerHTML = data[0].name + " (" + moment().format("M/D/YYYY") + ") ";
-      return res.json();
-    })
-    .then(function (data) {
-      console.log(data);
-      fiveDayDisplay(data, city);
-      console.log(data.daily[0].temp.day);
-    });
+  .then(function (res) {
+    return res.json();
+  })
+  .then(function (data) {
+    console.log(data);
+    tempDisplay(data, city);
+    return fetch(`https://api.openweathermap.org/data/2.5/onecall?lat=${data.coord.lat}&lon=${data.coord.lon}&appid=8a42d43f7d7dc180da5b1e51890e67dc`)
+  })
+  .then(function (res) {
+    // currentHeadingEl.innerHTML = data[0].name + " (" + moment().format("M/D/YYYY") + ") ";
+    return res.json();
+  })
+  .then(function (data) {
+    console.log(data);
+    fiveDayDisplay(data, city);
+    console.log(data.daily[0].temp.day);
+  });
 };
 
 var formSubmitHandler = function (event) {
   event.preventDefault();
   // get value from input element
   var city = nameInputEl.value.trim();
-  saveSearches();
-  //localStorage.setItem("city", JSON.stringify(city));
-  document.getElementById("search").classList.remove("d-none");
-  document.getElementById("search").innerHTML = city;
-  //localStorage.getItem(city);
+  saveSearch(city);
+  
   if (city) {
     getWeather(city);
     nameInputEl.value = "";
@@ -100,21 +100,41 @@ var fiveDayDisplay = function (data) {
   }
 };
 
-var saveSearches = function() {
-  for (let i = 0; i < 5; i++) {
-    localStorage.setItem('city' + i, city) ;
+let saveSearch = function(city) {
+  if (search.includes(city)) {
+      return;
+  } else {
+      search.push(city)
+      localStorage.setItem("search", JSON.stringify(search));
+      loadSearch();
   }
+}
+
+//load search history when page loads
+let loadSearch = function() {
+  if (search.length > 0) {
+      searchContainerEl.innerHTML = " ";
+      for (i = 0; i < search.length; i++) {
+          let searchBtn = document.createElement("button")
+          searchBtn.className = "search-btn w-100 m-0 mb-2 pe-auto"
+          searchBtn.textContent = search[i]
+          searchContainerEl.appendChild(searchBtn);
+      }
+  } else {
+      searchContainerEl.innerHTML = " ";
+  }
+}
+
+let clearHistory = function() {
+  search = [];
+  localStorage.clear();
+  loadSearch();
 }
 
 function k2f(K) {
   return Math.floor((K - 273.15) * 1.8 + 32);
 }
 
-var searchbuttonOne = function () {
-  //window.location.reload();
-  var city = localStorage.getItem(city);
-  getWeather(city);
-}
 
 userFormEl.addEventListener("submit", formSubmitHandler);
-document.getElementById("search").addEventListener("click", searchbuttonOne);
+clearButton.addEventListener("click", clearHistory);
