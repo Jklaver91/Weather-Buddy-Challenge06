@@ -2,12 +2,11 @@ var userFormEl = document.querySelector("#user-form");
 var nameInputEl = document.querySelector("#city");
 var citySearchTerm = document.querySelector("#city-search-term");
 var cityContainerEl = document.querySelector("#city-container");
-
 var currentTemp = document.getElementById("temperature");
 var currentHumidity = document.getElementById("humidity");
 var currentWind = document.getElementById("wind");
 var currentUV = document.getElementById("UV");
-var currentPicEl = document.getElementById("current-pic");
+const currentIconEl = document.querySelector("#current-icon");
 
 var getWeather = function (city) {
   // format the github api url
@@ -25,6 +24,7 @@ var getWeather = function (city) {
       return fetch(`https://api.openweathermap.org/data/2.5/onecall?lat=${data.coord.lat}&lon=${data.coord.lon}&appid=8a42d43f7d7dc180da5b1e51890e67dc`)
     })
     .then(function (res) {
+      // currentHeadingEl.innerHTML = data[0].name + " (" + moment().format("M/D/YYYY") + ") ";
       return res.json();
     })
     .then(function (data) {
@@ -38,9 +38,10 @@ var formSubmitHandler = function (event) {
   event.preventDefault();
   // get value from input element
   var city = nameInputEl.value.trim();
-  localStorage.setItem(city, city);
+  saveSearches();
+  //localStorage.setItem("city", JSON.stringify(city));
   document.getElementById("search").classList.remove("d-none");
-  document.getElementById("search").innerHTML = "Houston";
+  document.getElementById("search").innerHTML = city;
   //localStorage.getItem(city);
   if (city) {
     getWeather(city);
@@ -51,20 +52,26 @@ var formSubmitHandler = function (event) {
 };
 
 var tempDisplay = function (data) {
-  citySearchTerm.textContent = data.name;
+  var currMonthName  = moment().format('MMMM');
+  citySearchTerm.textContent = data.name + ": " + currMonthName + " " + moment().date() + ", " + moment().year() ;
   console.log(data.main.temp);
   cityContainerEl.replaceChildren();
   var currentTemp = document.createElement("h3");
   var currentHumidity = document.createElement("h3");
   var currentWind = document.createElement("h3");
-  var currentIcon =document.createElement("img");
+  let iconLink = "https://openweathermap.org/img/w/" + data.weather[0].icon + ".png";
+  
+  window.setInterval(function () {
+    $('#currentDay').html(moment().format('ddd MM/DD H:mm:ss'))
+  }, 1000);
 
-  currentIcon.innerHTML = `<img class="right w-25" src="${data.weather[0].id}.png" alt="">`
+
+  currentIconEl.innerHTML = "<img src=" + iconLink + ">";
   currentTemp.innerHTML = "Temperature: " + k2f(data.main.temp) + " &#176F";
   currentHumidity.innerHTML = "Humidity: " + data.main.humidity + " %";
   currentWind.innerHTML = "Wind Speed: " + data.wind.speed + " MPH";
 
-  document.getElementById("city-container").appendChild(currentIcon);
+  document.getElementById("city-container").appendChild(currentIconEl);
   document.getElementById("city-container").appendChild(currentTemp);
   document.getElementById("city-container").appendChild(currentHumidity);
   document.getElementById("city-container").appendChild(currentWind);
@@ -72,6 +79,7 @@ var tempDisplay = function (data) {
 
 var fiveDayDisplay = function (data) {
   var container = document.getElementById("cardContainer");
+  container.replaceChildren();
   for (let i = 0; i < 5; i++) {
     var dailyTemp = data.daily[i].temp.day
     var dailyHumidity = data.daily[i].humidity
@@ -80,11 +88,12 @@ var fiveDayDisplay = function (data) {
     var el = document.createElement("div");
     var humidity = document.createElement("div");
     var wind = document.createElement("div");
-    el.className = "card mx-3 mt-3";
+    var icon = document.createElement("div");
+    el.className = "card text-center mx-3 mt-3";
     el.id = "card" + i;
     el.innerHTML = "Temp:" + k2f(dailyTemp) + " &#176F ";
     humidity.innerHTML = "Humidity: " + dailyHumidity + "%";
-    wind.innerHTML = "Wind: " + dailyWind + " mph";;
+    wind.innerHTML = "Wind: " + dailyWind + " mph";
     container.append(el);
     el.append(humidity);
     humidity.append(wind);
@@ -93,7 +102,7 @@ var fiveDayDisplay = function (data) {
 
 var saveSearches = function() {
   for (let i = 0; i < 5; i++) {
-    localStorage.setItem('city' + i, 123) ;
+    localStorage.setItem('city' + i, city) ;
   }
 }
 
