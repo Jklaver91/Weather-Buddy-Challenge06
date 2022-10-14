@@ -35,10 +35,10 @@ var getWeather = function (city) {
 
 var formSubmitHandler = function (event) {
   event.preventDefault();
-  // get value from input element
+  // sets inputted citry to var and trims the string
   var city = nameInputEl.value.trim();
   saveSearch(city);
-
+  //input validation
   if (city) {
     getWeather(city);
     nameInputEl.value = "";
@@ -48,24 +48,23 @@ var formSubmitHandler = function (event) {
 };
 
 var tempDisplay = function (data) {
+  //formats and sets name and date in current temp
   var currMonthName = moment().format('MMMM');
   citySearchTerm.textContent = data.name + ": " + currMonthName + " " + moment().date() + ", " + moment().year();
+  //resets on new search.
   cityContainerEl.replaceChildren();
+  //creating elements 
   var currentTemp = document.createElement("h3");
   var currentHumidity = document.createElement("h3");
   var currentWind = document.createElement("h3");
-  let iconLink = "https://openweathermap.org/img/w/" + data.weather[0].icon + ".png";
-
-  window.setInterval(function () {
-    $('#currentDay').html(moment().format('ddd MM/DD H:mm:ss'))
-  }, 1000);
-
-
-  currentIconEl.innerHTML = "<img src=" + iconLink + ">";
+  //sets the path to the current days weather icon
+  let icon = "https://openweathermap.org/img/w/" + data.weather[0].icon + ".png";
+  //writes the HTML for each section.
+  currentIconEl.innerHTML = "<img src=" + icon + ">";
   currentTemp.innerHTML = "Temperature: " + k2f(data.main.temp) + " &#176F";
   currentHumidity.innerHTML = "Humidity: " + data.main.humidity + " %";
   currentWind.innerHTML = "Wind Speed: " + data.wind.speed + " MPH";
-
+  //appends data to the container
   document.getElementById("city-container").appendChild(currentIconEl);
   document.getElementById("city-container").appendChild(currentTemp);
   document.getElementById("city-container").appendChild(currentHumidity);
@@ -74,41 +73,43 @@ var tempDisplay = function (data) {
 
 var fiveDayDisplay = function (data) {
   var container = document.getElementById("cardContainer");
+  // resets cards on new search
   container.replaceChildren();
+  // creates 5 instances and grabs data for each days array.
   for (let i = 0; i < 5; i++) {
     var dailyTemp = data.daily[i].temp.day
     var dailyHumidity = data.daily[i].humidity
     var dailyWind = data.daily[i].wind_speed
 
-    var el = document.createElement("div");
+    var card = document.createElement("div");
     var humidity = document.createElement("div");
     var wind = document.createElement("div");
-    el.className = "card text-center mx-3 mt-3";
-    el.id = "card" + i;
-    el.innerHTML = "Temp:" + k2f(dailyTemp) + " &#176F ";
+    //sets up card
+    card.className = "card text-center mx-3 mt-3";
+    card.id = "card" + i;
+    //cards data
+    card.innerHTML = "Temp:" + k2f(dailyTemp) + " &#176F ";
     humidity.innerHTML = "Humidity: " + dailyHumidity + "%";
     wind.innerHTML = "Wind: " + dailyWind + " mph";
-    container.append(el);
-    el.append(humidity);
+    //appends data
+    container.append(card);
+    card.append(humidity);
     humidity.append(wind);
   }
 };
 
 let saveSearch = function (city) {
-  if (search.includes(city)) {
-    return;
-  } else {
+    //pushes and saves entry into the array
     search.push(city);
     localStorage.setItem("search", JSON.stringify(search));
     loadStorage();
-  }
 }
 
-//load search history when page loads
 let loadStorage = function () {
   if (search.length > 0) {
     searchContainerEl.innerHTML = " ";
     for (i = 0; i < search.length; i++) {
+      //adds searches as buttons to the html.
       let searchBtn = document.createElement("button");
       searchBtn.className = "btn w-100 m-0 mt-2 mb-2 pe-auto";
       searchBtn.textContent = search[i];
@@ -120,6 +121,7 @@ let loadStorage = function () {
 }
 
 let clearStorage = function () {
+  //empties array.
   search = [];
   localStorage.clear();
   loadStorage();
@@ -134,10 +136,11 @@ let viewPast = function (event) {
 }
 
 function k2f(K) {
+  //equation to change provided Kelvin to Fahrenheit
   return Math.floor((K - 273.15) * 1.8 + 32);
 }
 
-
+//sets up our buttons.
 userFormEl.addEventListener("submit", formSubmitHandler);
 clearButton.addEventListener("click", clearStorage);
 searchContainerEl.addEventListener("click", viewPast);
